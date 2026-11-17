@@ -15,7 +15,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "silverstripe/spamprotection": "^3"
+        "php": "^8.3",
+        "silverstripe/spamprotection": "^5"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +25,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.x-dev"
+            "dev-upgrade-ss6": "5.x-dev"
         }
     },
     "license": "BSD-3-Clause"
