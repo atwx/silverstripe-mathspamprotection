@@ -5,6 +5,7 @@ namespace SilverStripe\MathSpamProtection;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Session;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Forms\TextField;
 
 /**
@@ -80,32 +81,32 @@ class MathSpamProtectorField extends TextField
      *
      * @return bool
      */
-    public function validate($validator)
+    public function validate(): ValidationResult
     {
-        if (!$this->config()->get( 'enabled')) {
-            return true;
-        }
+        $this->beforeExtending('updateValidate', function (ValidationResult $result): void {
+            if (!$this->config()->get('enabled')) {
+                return;
+            }
 
-        $value = Controller::curr()->getRequest()->postVar($this->getName());
+            $value = Controller::curr()->getRequest()->postVar($this->getName());
 
-        if (!$value) {
-            $value = $this->Value();
-        }
+            if (!$value) {
+                $value = $this->Value();
+            }
 
-        if (!$this->isCorrectAnswer($value)) {
-            $validator->validationError(
-                $this->name,
-                _t(
-                    'MathSpamProtectionField.INCORRECTSOLUTION',
-                    "Incorrect solution to the spam protection question, please try again."
-                ),
-                "error"
-            );
+            if (!$this->isCorrectAnswer($value)) {
+                $result->addFieldError(
+                    $this->name,
+                    _t(
+                        'MathSpamProtectionField.INCORRECTSOLUTION',
+                        "Incorrect solution to the spam protection question, please try again."
+                    ),
+                    "error"
+                );
+            }
+        });
 
-            return false;
-        }
-
-        return true;
+        return parent::validate();
     }
 
 
